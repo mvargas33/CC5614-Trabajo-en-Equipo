@@ -5,6 +5,38 @@ import os.path
 import random
 import string
 
+def find_next(pairs, nextt, prev):
+    for i in range(0, len(pairs)):
+        if pairs[i][0] == nextt and i > prev:
+            return i
+    return -1
+
+def printWay(pairs):
+    pendientes = pairs[:]
+    #print(pendientes)
+
+    i = 0
+    while True:
+        if i >= len(pendientes):
+            break
+        e = pendientes[i]
+        fromm = e[0]
+        too = e[1]
+        #print("from " + fromm)
+        #print("too " + too)
+        index = i
+        while True:
+            index = find_next(pendientes, too, index)
+            if index == -1:
+                print(fromm + ' => ' + too)
+                break
+            else:
+                too = pendientes[index][1]
+                #print("too " + too)
+        i+=1
+
+
+
 def random_renames(files):
     """
     Generate a list of randomised renames to shuffle a list of files.
@@ -33,6 +65,7 @@ def random_renames(files):
 
 
 def main():
+    pairs = []
     """
     Renames files in the 'shuffleme' directory in such a way as to shuffle all
     of them between their existing names.
@@ -76,14 +109,52 @@ def main():
         # Perform the actual rename. Not renaming to newname (actual new name),
         # but tempname (same as newname unless that file exists, in which case
         # we already delayed a separate rename).
+        pairs.append([oldname, tempname])
+        print(oldname + " -> " + tempname)
         os.rename(oldname, tempname)
+    
+    print('\n')
+    printWay(pairs)
+
+
+def myShuffle(path):
+    moves = []
+
+    files = os.listdir(path)
+    files = [os.path.join(path, name) for name in files]
+
+    if len(files) % 2 == 1:
+        reserva = files.pop()
+
+    while len(files) > 0:
+        primero = files.pop(random.randint(0, len(files)-1))
+        segundo = files.pop(random.randint(0, len(files)-1))
+        os.rename(primero, primero + "QWERTY")
+        os.rename(segundo, segundo + "QWERTY")
+        os.rename(primero + "QWERTY", segundo)
+        os.rename(segundo + "QWERTY", primero)
+        moves.append([primero, segundo])
+        print(primero + " <-> " + segundo)
+
+    if reserva != None:
+        os.rename(segundo, segundo + "QWERTY")
+        os.rename(reserva, reserva + "QWERTY")
+        os.rename(segundo + "QWERTY", reserva)
+        os.rename(reserva + "QWERTY", segundo)
+        moves.append([segundo, reserva])
+        print(segundo + " <-> " + reserva)
+
+    # print(moves)
+
 
 
 if __name__ == '__main__':
-    main()
-
-    # Add numeration
     path = 'Audios'
+
+    # Shuffle
+    myShuffle(path) 
+    
+    # Add numeration
     for count, filename in enumerate(os.listdir(path)):
         original = os.path.join(path, filename)
         new = os.path.join(path, str(count) + ' ' + filename)
