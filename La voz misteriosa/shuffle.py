@@ -81,3 +81,10 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+    # Add numeration
+    path = 'Audios'
+    for count, filename in enumerate(os.listdir(path)):
+        original = os.path.join(path, filename)
+        new = os.path.join(path, str(count) + ' ' + filename)
+        os.rename(original, new) 
