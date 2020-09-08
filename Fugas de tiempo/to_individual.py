@@ -19,8 +19,11 @@ header = rows[0]
 for i in range(1, len(rows)):
     respuesta = rows[i] 
     nombre = respuesta[1]
+    secc = respuesta[2]
+    secc = secc[:9]
+    print(secc)
     
-    wb = xlsxwriter.Workbook(".\indv" + '\\'+ nombre + ".xlsx") 
+    wb = xlsxwriter.Workbook(".\indv" + '\\'+ secc + '\\' + nombre + ".xlsx") 
     sheet1 = wb.add_worksheet('Respuestas')
 
     for i in range(1, len(header)): # First column
@@ -40,7 +43,6 @@ for i in range(1, len(rows)):
                                          'mid_color': "#FFEB84",
                                          'max_color': "#F8696B",
                                          })
-
 
     wb.close() 
 
